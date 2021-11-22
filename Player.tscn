@@ -1,0 +1,84 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Player.gd" type="Script" id=1]
+[ext_resource path="res://New Piskel-1.png (1).png" type="Texture" id=2]
+[ext_resource path="res://HurtBox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://StateMachine.gd" type="Script" id=4]
+[ext_resource path="res://Idle.gd" type="Script" id=5]
+[ext_resource path="res://Move.gd" type="Script" id=6]
+[ext_resource path="res://Run.gd" type="Script" id=7]
+[ext_resource path="res://Attack.gd" type="Script" id=8]
+[ext_resource path="res://AttackBox.tscn" type="PackedScene" id=9]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 9.02849
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 8.02427
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 9.51836, 6.82217 )
+
+[sub_resource type="RectangleShape2D" id=4]
+
+[node name="Player" type="KinematicBody2D" groups=[
+"Hero",
+]]
+position = Vector2( 592, 355.034 )
+scale = Vector2( 0.302896, 0.29412 )
+script = ExtResource( 1 )
+speed = 300.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2( -4.33069, 42.6948 )
+scale = Vector2( 19.7525, 19.7448 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( -0.834595, 0 )
+scale = Vector2( 14.1767, 14.9401 )
+texture = ExtResource( 2 )
+
+[node name="HurtBox" parent="Sprite" instance=ExtResource( 3 )]
+position = Vector2( 0.00605774, 0.259148 )
+scale = Vector2( 1.50494, 1.60517 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/HurtBox"]
+position = Vector2( -0.117355, -0.322571 )
+shape = SubResource( 2 )
+
+[node name="MainAttackBox" parent="Sprite" instance=ExtResource( 9 )]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/MainAttackBox"]
+position = Vector2( 25.2459, -0.948875 )
+shape = SubResource( 3 )
+disabled = true
+
+[node name="SecondAttackBox" parent="Sprite" instance=ExtResource( 9 )]
+position = Vector2( 26.1414, 0 )
+scale = Vector2( 0.0705383, 0.066934 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/SecondAttackBox"]
+position = Vector2( -65.9316, 3.59473 )
+scale = Vector2( 8.27793, 24.2543 )
+shape = SubResource( 4 )
+disabled = true
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 4 )
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource( 5 )
+
+[node name="Move" type="Node" parent="StateMachine"]
+script = ExtResource( 6 )
+
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource( 7 )
+
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource( 8 )
+
+[connection signal="on_take_damage" from="Sprite/HurtBox" to="." method="_on_HurtBox_on_take_damage"]
